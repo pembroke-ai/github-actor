@@ -3,7 +3,7 @@
 
 ### APIs
 - [ ] Repo Management
-	- [ ] Create a new repo `createNewRepo()`
+	- [ ] Create a new repo 
 	- [ ] Add an existing remote or generate one if not available
 	- [ ] Commit with relevant changes (suggest a commit message)
 	- [ ] Push to remote

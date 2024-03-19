@@ -1,11 +1,16 @@
 /**
- * @description
+ * @description This file contains the base functions to manage a node application
  */
 
 import { exec } from "child_process";
 import * as fs from "fs";
 import inquirer from "inquirer";
 
+/**
+ *
+ * @param {string} folderPath Path to the folder where you want the root of your NodeJS project to be
+ * @returns Promise
+ */
 function initializeNodeProject(folderPath) {
   return new Promise((resolve, reject) => {
     exec(`cd ${folderPath} && npm init -y`, (error, stdout, stderr) => {
@@ -22,6 +27,11 @@ function initializeNodeProject(folderPath) {
   });
 }
 
+/**
+ *
+ * @param {string} folderPath Path to the folder where you want the root of your NodeJS project to be
+ * @returns
+ */
 export function installDependencies(folderPath) {
   return new Promise((resolve, reject) => {
     exec(`cd ${folderPath} && npm i`, (error, stdout, stderr) => {
@@ -41,7 +51,7 @@ export function installDependencies(folderPath) {
 /**
  *
  * @param {string} folderPath path to the folder where the node project is
- * @param {*} packageList array of packages to be installed
+ * @param {string[]} packageList array of packages to be installed
  * @returns
  */
 export function installDependencies(folderPath, packageList) {
@@ -63,6 +73,12 @@ export function installDependencies(folderPath, packageList) {
   });
 }
 
+/**
+ *
+ * @param {string} folderPath path to the folder where the node project is
+ * @param {string[]} packageList array of packages to be uninstalled
+ * @returns
+ */
 export function uninstallDependencies(folderPath, packageList) {
   return new Promise((resolve, reject) => {
     exec(
@@ -84,11 +100,12 @@ export function uninstallDependencies(folderPath, packageList) {
 
 /**
  *
- * @param {*} folderPath
+ * @param {string} folderPath
+ * @param {string} testScript script to run the tests
  * @returns
- * @description
+ * @description Runs the specified script in the NodeJS project, by default this is intended to run tests
  */
-export function runTests(folderPath, testScript = "test") {
+export function runScripts(folderPath, testScript = "test") {
   return new Promise((resolve, reject) => {
     exec(
       `cd ${folderPath} && npm run ${testScript}}`,
