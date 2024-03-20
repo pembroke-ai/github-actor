@@ -44,3 +44,14 @@ export function appendFile(filePath, contentToAppend) {
   });
   return;
 }
+
+export function createDirectory(folderPath) {
+  // Check if directory already exists
+  if (!fs.existsSync(folderPath)) {
+    // Create directory
+    fs.mkdirSync(folderPath);
+    console.log(`Directory created at ${folderPath}`);
+  } else {
+    console.log(`Directory ${folderPath} already exists`);
+  }
+}
