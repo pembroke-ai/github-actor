@@ -1,25 +1,40 @@
 import OpenAI from "openai";
-import { prompt } from "./prompt.js";
+import { basePrompt } from "./prompt.js";
+import "dotenv/config.js";
 
 const openai = new OpenAI();
+let prompt;
+// prompt = basePrompt("Build a reverse proxy API");
 
-export const getCommands = async function () {
-    const completion = await openai.chat.completions.create({
-        messages: [
-            {
-                role: "user", content: `${prompt}`
-            }
-        ],
-        response_format: { type: "json_object" },
-        model: "gpt-4-1106-preview",
-        temperature: 0
-    });
+export const getCommands = async function (
+  gptPrompt = prompt,
+  olderMsgs = null
+) {
+  const messages = olderMsgs
+    ? [
+        ...olderMsgs,
+        {
+          role: "user",
+          content: `${gptPrompt}`,
+        },
+      ]
+    : [
+        {
+          role: "user",
+          content: `${gptPrompt}`,
+        },
+      ];
+  console.log("messages: ", messages);
+  const completion = await openai.chat.completions.create({
+    messages,
+    response_format: { type: "json_object" },
+    model: "gpt-4-1106-preview",
+    temperature: 0,
+  });
 
-    const commands = completion.choices[0].message.content;
-    console.log(commands)
+  const res = { content: completion.choices[0].message.content, messages };
+  console.log("res: ", res);
+  return res;
+};
 
-    return completion.choices[0].message.content;
-}
-
-
-// getCommands()
+// getCommands(prompt);

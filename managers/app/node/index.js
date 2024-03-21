@@ -14,17 +14,20 @@ import { parseErrorMessage } from "./utils.js";
  */
 export function initializeNodeProject({ folderPath }) {
   return new Promise((resolve, reject) => {
-    exec(`mkdir -p ${folderPath} && cd ${folderPath} && npm init -y && npm i`, (error, stdout, stderr) => {
-      if (error) {
-        reject(`Error initializing Node.js project: ${error}`);
-        return;
+    exec(
+      `mkdir -p ${folderPath} && cd ${folderPath} && npm init -y && npm i`,
+      (error, stdout, stderr) => {
+        if (error) {
+          reject(`Error initializing Node.js project: ${error}`);
+          return;
+        }
+        if (stderr) {
+          reject(`Error initializing Node.js project: ${stderr}`);
+          return;
+        }
+        resolve(stdout.trim());
       }
-      if (stderr) {
-        reject(`Error initializing Node.js project: ${stderr}`);
-        return;
-      }
-      resolve(stdout.trim());
-    });
+    );
   });
 }
 
@@ -115,25 +118,26 @@ export function runScripts({ folderPath, testScript = "test" }) {
 
     console.log("Running script: ", script);
 
-    exec(
-      `cd ${folderPath} && ${script}`,
-      (error, stdout, stderr) => {
-        console.log(`stdout: ${stdout}`);
-        if (error) {
-          console.error(`exec error: ${error}`);
-          reject(`Error running script: ${error}`);
-        }
-        if (stderr) {
-          console.error(`stderr: ${stderr}`);
-          // Decide whether to reject based on your criteria for stderr
-          reject(`Error running script: ${stderr}`);
-        }
-        if (parseErrorMessage(stdout.trim()).isError) {
-          reject(`Error running script: ${parseErrorMessage(stdout.trim())}`);
-        }
-        resolve(stdout.trim());
+    exec(`cd ${folderPath} && ${script}`, (error, stdout, stderr) => {
+      console.log(`stdout: ${stdout}`);
+      if (error) {
+        console.error(`exec error: ${error}`);
+        reject(`Error running script: ${error}`);
       }
-    );
+      if (stderr) {
+        console.error(`stderr: ${stderr}`);
+        // Decide whether to reject based on your criteria for stderr
+        reject(`Error running script: ${stderr}`);
+      }
+      if (parseErrorMessage(stdout.trim()).isError) {
+        reject(
+          `Error running script: ${
+            parseErrorMessage(stdout.trim()).errorMessage
+          }`
+        );
+      }
+      resolve(stdout.trim());
+    });
   });
 }
 
